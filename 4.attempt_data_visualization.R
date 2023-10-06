@@ -1,0 +1,175 @@
+# data visualization
+# Import libraries
+# Import dataset
+install.packages("tidyverse")
+
+library(palmerpenguins)
+library(ggplot2)
+library(dplyr)
+
+# view the dataset
+head(penguins)
+View(penguins)
+str(penguins)
+
+
+# check for missing values
+sum(is.na(penguins))
+
+# cheecking the column of missing values
+colSums(is.na(penguins))
+
+
+
+# After checking the data set we see their
+# are 19 missing values så i decided to drop them
+penguins <- na.omit(penguins)
+
+# checking one more time for missing values
+sum(is.na(penguins))
+
+# cheecking the column of missing values
+colSums(is.na(penguins))
+
+
+# Checking the statistical summary of the dataset
+summary(penguins)
+
+# Checking the number of rows and columns
+dim(penguins)
+
+# Checking the number of unique values in each column
+sapply(penguins, function(x) length(unique(x)))
+
+# Visualization 1
+# Plotting the distribution of the penguins
+ggplot(penguins, aes(x = species, fill = species)) +
+  geom_bar() +
+  labs(title = "Distribution of the penguins",
+       x = "Species",
+       y = "Count")
+
+
+# plotting how large are the penguins
+# in this plot we can see that the Adelie penguins are the smallest
+# and the Gentoo penguins are the largest
+
+# Visualization 2
+# Using boxplot
+ggplot(penguins, aes(x = species, y = body_mass_g, fill = species)) +
+  geom_boxplot() +
+  labs(title = "How large the Penguins are",
+       x = "Species",
+       y = "Body mass in grams") 
+
+
+### in this plot, we can see that the Chinstrap penguins are smaller than the other two species.
+# I also created geom_smooth to see the trend of the penguin’s size. then I created a scatter plot to see
+# the relationship between the body mass and the flipper length. I also added the geom_smooth to
+# see the trend of the relationship.
+
+# Visualization 3
+pengi_l <- ggplot(data = penguins) +
+  geom_smooth(mapping = aes(x = flipper_length_mm, y = body_mass_g), color =
+                "yellow3", method = "lm") +
+  geom_jitter(mapping = aes(x = flipper_length_mm, y = body_mass_g, color =
+                              species, shape = species), size = 2, alpha = 0.8) +
+  # Giving labels proper names
+  labs(title = "How large are the penguins?",
+       subtitle = "Body Mass vs Flipper Length of the three Palmer Penguin
+species",
+       caption = "Data collected from 2007 - 2009 by Dr. Kristen Gorman",
+       color = "Penguin Species", 
+       shape = "Penguin Species") + 
+  # Giving x and y-xis proper names
+  xlab(label = "Flipper Length (mm)") +
+  ylab(label = "Body Mass (g)") +
+  # Chosen theme for the plot
+  theme_minimal() +
+  # Styling of different elements in the visualization
+  theme(legend.position = c(0.15, 0.75),
+        legend.title = element_text(face = "bold"),
+        legend.background = element_rect(color = "yellow3"),
+        plot.title = element_text(hjust = 0.1, face = "bold"),
+        plot.title.position = "plot",
+        plot.subtitle = element_text(hjust = 0.15),
+        plot.caption = element_text(hjust = 0.9, face= "italic"),
+        plot.caption.position = "plot") +
+  # Adding annotation
+  annotate("text", x = 223, y = 3800, label = "The Gentoos are the largest",
+           color = "grey2", size = 4)
+pengi_l
+
+# Where do the penguins live
+# In this plot we can see that the Adelie penguins live in the
+# northern hemisphere and the Gentoo penguins live in the southernhemisphere
+# First checking the box plot for this
+
+# Visualization 4
+ggplot(penguins, aes(x = species, y = island, fill = species)) +
+  geom_boxplot() +
+  labs(title = "Penguins live",
+       x = "Species",
+       y = "Island")
+
+### Visualization 5
+live_Peng <- ggplot(data = penguins) +
+  geom_point(mapping = aes(x = flipper_length_mm, y = body_mass_g, color =
+                             species), size = 2.5, alpha = 0.6) +
+  facet_wrap(~island) +
+  # Giving labels proper names
+  labs(title = "Where  species of Palmer Penguins live?",
+       subtitle = "A  species living on Biscoe,
+Dream and Torgersen islands",
+       caption = "Data collected from 2007 - 2009 by Dr. Kristen Gorman",
+       color = "Penguin Species:") +
+  # Customizing the data point colors
+  scale_color_manual(values = c("#319DA0","#A149FA", "#E38B29")) +
+  # Giving x and y-xis proper names
+  xlab(label = "Flipper Length (mm)") +
+  ylab(label = "Body Mass (g)") +
+  # Chosen theme for the plot
+  theme_classic() +
+  # Styling of different elements in the visualization
+  theme(legend.position = "top",
+        legend.title = element_text(face = "bold"),
+        strip.text = element_text(face = "bold"),
+        plot.title = element_text(face = "bold"))
+live_Peng
+
+# How much do the penguins weigh
+# In this plot we can see that the Adelie penguins weigh the least
+# and the Gentoo penguins weigh the most
+# Visualization 6
+ggplot(penguins, aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() +
+  labs(title = "Penguin weigh",
+       x = "Species",
+       y = "Bill length in mm")
+
+
+### Visualization 7
+weigh_peng <- ggplot(data = penguins) +
+  geom_count(mapping = aes(x = bill_length_mm, y = body_mass_g, fill = species)) +
+  labs(title = "How much do the penguins weigh",
+       x = "Bill length in mm",
+       y = "Body mass in grams") +
+  theme_minimal() +
+  theme(plot.title = element_text(face = "bold", color = "#3C2317"),
+        plot.subtitle = element_text(face = "bold", color = "#628E90"),
+        plot.caption = element_text(face = "italic", color = "#3C2317"),
+        plot.background = element_rect(fill = "#F5EFE6"),
+        panel.background = element_rect(fill = "#F5EFE6"),
+        panel.grid = element_line(color = "#F5EFE6"),
+        legend.title = element_text(face = "bold", color = "#3C2317"),
+        legend.text = element_text(color = "#628E90"),
+        legend.background = element_rect(fill = "#F5EFE6"),
+        legend.key = element_rect(fill = "#F5EFE6"),
+        legend.box.just = "top",
+        axis.title = element_text(color = "#3C2317")) +
+  annotate("text", x = 52.5, y = 21.4, label = "The Chinstraps have big
+months", color = "red", size = 3)
+weigh_peng
+
+
+
